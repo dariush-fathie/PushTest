@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">PushTest</string>
+    <string name="default_notification_channel_id">push test channel id</string>
+</resources>
