@@ -39,7 +39,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
             val b = String(a.toByteArray(), Charsets.UTF_8)
 
-            mNotification.title = URLDecoder.decode(remoteMessage.data["title"],"UTF-8")
+            mNotification.title = remoteMessage.data["title"]
             mNotification.bigTitle = remoteMessage.data["bigTitle"]
             mNotification.message = remoteMessage.data["message"]
             mNotification.bigMessage = remoteMessage.data["bigMessage"]
@@ -118,7 +118,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 PendingIntent.FLAG_ONE_SHOT)
 
         val bigPictureImage = (ContextCompat.getDrawable(this, R.drawable.notifi_big_pic) as BitmapDrawable).bitmap
-        val bigPictureImageSampleSize = (ContextCompat.getDrawable(this, R.drawable.notifi_big_pic) as BitmapDrawable).bitmap
+        val size = Converter.pxFromDp(this , 64f)
+        val bigPictureImageSampleSize = Bitmap.createScaledBitmap(bigPictureImage , size.toInt() , size.toInt() , false)
 
         val launcherBitmap = (ContextCompat.getDrawable(this, R.mipmap.ic_launcher) as BitmapDrawable).bitmap
 
@@ -131,11 +132,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent)
+                .setShowWhen(false)
 
         if (remoteNotification.type == NotificationModel.Type.BIG_IMAGE) {
             notificationBuilder.setStyle(NotificationCompat.BigPictureStyle()
                     .bigPicture(bigPictureImage)
-                    .bigLargeIcon(bigPictureImage)
+                    .bigLargeIcon(bigPictureImageSampleSize)
                     .setSummaryText(remoteNotification.summary)
                     .setBigContentTitle(remoteNotification.bigTitle))
         } else {
